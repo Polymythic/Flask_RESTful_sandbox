@@ -25,7 +25,6 @@ class Item(Resource):
                 return {'item': name}
         return {'item': 'Item Not Found'}, 404
 
-
     def post(self, name):
         # The get_json() call requires the header type to be set properly
         parameters = request.get_json()
@@ -39,6 +38,16 @@ class Item(Resource):
         global items
         items = list(filter(lambda x: x['name']!= name, items))  
         return {"message": "Item deleted: {}".format(name)}
+
+    def put(self, name):
+        item = next(filter(lambda x: x['name'] == name, items), None)
+        parameters = request.get_json()
+        if item is None:
+            #This was not what was taught, but lets try it
+            self.post(name)
+        else:
+            item.update(parameters)
+        return item
 
 class Items(Resource):
     def get(self):

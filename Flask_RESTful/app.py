@@ -27,12 +27,18 @@ class Item(Resource):
 
 
     def post(self, name):
-            # The get_json() call requires the header type to be set properly
-            parameters = request.get_json()
-            item = {'name':parameters['name'], 'price':parameters['price']}
-            items.append(item)
-            return item
+        # The get_json() call requires the header type to be set properly
+        parameters = request.get_json()
+        item = {'name':parameters['name'], 'price':parameters['price']}
+        items.append(item)
+        return item
 
+    def delete(self, name):
+        # There is some squirreliness with scope of the items.  Without referencing the global var
+        # it assumes that the variable has local scope
+        global items
+        items = list(filter(lambda x: x['name']!= name, items))  
+        return {"message": "Item deleted: {}".format(name)}
 
 class Items(Resource):
     def get(self):
